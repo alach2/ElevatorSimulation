@@ -50,8 +50,6 @@ public class List {
             return new ArrayDeque<>();
         }
     }
-
-    public static 
 }
 
 public class Floor {
@@ -81,48 +79,81 @@ public class Elevator {
     public Elevator(int capacity){
         currFloor = 1;
         elevatorCapacity = capacity;
-        goingUp = null;
-
+        goingUp = true;
+        goingDown = false;
+        passengers = new PriorityQueue<>(Comparator.comparingInt(Passenger::getDestination));
     }   
 
     public void move(){
-        if(goingUp == true){
+        if (goingUp == true) {
             currFloor++;
-        }else{
+        } else {
             currFloor--;
         }
     }
-    //boardPassenger
 
-    //releasePassenger
+    public void boardPassenger(Passenger passenger){
+        if (passengers.size() < elevatorCapacity) {
+            passengers.add(passenger);
+            System.out.println("Passenger " + passenger.getName() + " entered the elevator");
+        } else {
+            System.out.println("Sorry, the elevator is full");
+        }
+    }
+    
+    public void releasePassenger(){
+        Passenger passenger = passengers.poll();
+        if (passenger != null) {
+            System.out.println("Passenger " + passenger.getName() + " left the elevator on floor " + currFloor);
+        }
+    }
 
-    //adjustDirection
+    public void adjustDirection(){
+        if (passengers.isEmpty()) {
+            goingUp = true;
+            goingDown = false;
+        } else {
+            Passenger topPassenger = passengers.peek();
+            if (currFloor < topPassenger.getDestination()){
+                goingUp = true;
+            } else {
+                goingDown = true;
+            }
+        }
+    }
     
 }
 
 public class Main {
     public static void main(String[] args) {
+        Properties propertyFile = new Properties();
         if (args.length > 0) {
             String file = args[0];
             try (FileInputStream input = new FileInputStream(file)) {
-                Properties propertyFile = new Properties();
                 propertyFile.load(input);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            Properties defaultProperties = new Properties();
-            defaultProperties.setProperty("structures", "linked");
-            defaultProperties.setProperty("floors", "32");
-            defaultProperties.setProperty("passengers", "0.03");
-            defaultProperties.setProperty("elevators", "1"); 
-            defaultProperties.setProperty("elevatorCapacity", "10");
-            defaultProperties.setProperty("duration", "500");
+            propertyFile.setProperty("structures", "linked");
+            propertyFile.setProperty("floors", "32");
+            propertyFile.setProperty("passengers", "0.03");
+            propertyFile.setProperty("elevators", "1"); 
+            propertyFile.setProperty("elevatorCapacity", "10");
+            propertyFile.setProperty("duration", "500");
 
         }
+        String structureType = propertyFile.getProperty(structures);
+        int numFloors = Integer.parseInt(propertyFile.getProperty(floors));
+        int passengerProbabilty = Integer.parseInt(propertyFile.getProperty(passengers));
+        int elevatorCap = Integer.parseInt(propertyFile.getProperty(elevatorCapacity));
+        int simDuration = Integer.parseInt(propertyFile.getProperty(duration));
 
-        long currentTime = 0;
+        Elevator elevator = new Elevator(elevatorCap);
 
+        for (int tick = 0; tick < simDuration; tick++){
+            
+        }
 
         //print every step of the simulation
 
