@@ -94,9 +94,9 @@ public class Elevator {
     }
 
     public void travelCertainFloors(int floors){
-        if(isGoingUp()){
+        if (isGoingUp()) {
             currFloor += floors;
-        } else if(isGoingDown()){
+        } else if (isGoingDown()) {
             currFloor -= floors;
         }
     }
