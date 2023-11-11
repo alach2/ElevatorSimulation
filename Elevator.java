@@ -64,8 +64,9 @@ public class Floor {
         goingDownPassenger = List.createPassengerQueue(type);
 
     }
-
-    //tick
+    public void tick(Elevator elevator){
+        loadingPassengers(elevator);
+    }
 
 }
 public class Elevator {
@@ -89,6 +90,14 @@ public class Elevator {
             currFloor++;
         } else {
             currFloor--;
+        }
+    }
+
+    public void travelCertainFloors(int floors){
+        if(isGoingUp()){
+            currFloor += floors;
+        } else if(isGoingDown()){
+            currFloor -= floors;
         }
     }
 
@@ -121,6 +130,20 @@ public class Elevator {
             }
         }
     }
+
+    public boolean isGoingUp(){
+        if (!(passengers.isEmpty()) && currFloor < passengers.peek().getDestination()){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isGoingDown(){
+        if (!(passengers.isEmpty()) && currFloor > passengers.peek().getDestination()){
+            return true;
+        }
+        return false;
+    }
     
 }
 
@@ -152,7 +175,7 @@ public class Main {
         Elevator elevator = new Elevator(elevatorCap);
 
         for (int tick = 0; tick < simDuration; tick++){
-            
+
         }
 
         //print every step of the simulation
