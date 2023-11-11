@@ -3,6 +3,7 @@ import java.util.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 import java.util.PriorityQueue;
+import java.util.ArrayList;
 
 public class Passenger {
     private String name;
@@ -57,15 +58,76 @@ public class Floor {
     public Deque<Passenger> goingUpPassenger;
     public Deque<Passenger> goingDownPassenger;
     private int totalFloors;
+    public int passengerProbability;
     
-    public Floor(int total, String type){
+    public Floor(int total, String type, int passProb){
         totalFloors = total;
+        passengerProbability = passProb;
         goingUpPassenger = List.createPassengerQueue(type);
         goingDownPassenger = List.createPassengerQueue(type);
-
     }
     public void tick(Elevator elevator){
         loadingPassengers(elevator);
+
+        if (elevator.isGoingUp() && elevator.getCurrentFloor() < totalFloors) {
+            int travelingFloors = Math.min(5, totalFloors - elevator.getCurrentFloor());
+            elevator.travelCertainFloors(travelingFloors);
+        } else if (elevator.isGoingDown() && elevator.getCurrentFloor() > 1){
+            int travelingFloors = Math.min(5, elevator.getCurrentFloor() - 1);
+            elevator.travelCertainFloors(travelingFloors);
+        }
+        newPassenger();
+    }
+
+    // method to unload and load passengers   
+    private void loadingPassengers(Elevator elevator){
+        if(elevator.isGoingUp() && elevator.getCurrentFloor() <= totalFloors){
+            List<Passenger> passengerBoarding = new ArrayList<>();
+            for(Passenger passenger : goingUpPassenger){
+                if(passenger.getDestination() == elevator.getCurrentFloor()){
+                    passengerBoarding.add(passenger);
+                }
+            }
+
+            for(Passenger passenger : passengerBoarding){
+                goingUpPassenger.remover(passenger);
+                elevator.boardPassenger(passenger);
+                System.out.println(passenger.getName() + " just boarded the elevator on floor " + elevator.getCurrentFloor());
+            }
+
+        } else if (elevator.isGoingDown() && elevator.getCurrentFloor() >= 1){
+            List<Passenger> passengerBoarding = new ArrayList<>();
+            for(Passenger passenger : goingDownPassenger){
+                if(passenger.getDestination() == elevator.getCurrentFloor()){
+                    passengerBoarding.add(passenger);
+                }
+            }
+
+            for(Passenger passenger : passengerBoarding){
+                goingDownPassenger.remove(passenger);
+                elevator.boardPassenger(passenger);
+                System.out.println(passenger.getName() + " just boarded the elevator on floor " + elevator.getCurrentFloor());
+            }
+
+        }
+    }
+
+    private void newPassenger(){
+        if(random.nextDouble() < passengerProbability){
+            int destination = random.nextInt(totalFloors) + 1;
+            int passengerNumber = random.nextInt(100);
+            String passengerName = "Passenger" + passengerNumber;
+            Passenger newPassenger = new Passenger(passengerName, destination, 0);
+
+            if(destination > goingUpPassenger.peekLast().getDestination()){
+                goingUpPassenger.add(newPassenger);
+                System.out.println(newPassenger.getName() + " is waiting to go to " + destination);
+            } else {
+                goingDownPassenger.add(newPassenger);
+                System.out.println(newPassenger.getName() + " is waiting to go down to " + destination);
+            }
+        }
+
     }
 
 }
@@ -94,7 +156,7 @@ public class Elevator {
     }
 
     public void travelCertainFloors(int floors){
-        if (isGoingUp()) {
+        if (isGoingUp() == true ) {
             currFloor += floors;
         } else if (isGoingDown()) {
             currFloor -= floors;
@@ -143,6 +205,10 @@ public class Elevator {
             return true;
         }
         return false;
+    }
+
+    public int getCurrentFloor(){
+        return currFloor;
     }
     
 }
