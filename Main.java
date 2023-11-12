@@ -44,7 +44,8 @@ class Main {
             elevator.move();
 
             elevator.boardReleasePassenger();
-
+            
+            elevator.board(new Passenger("", elevator.getDestination(), elevator.getCurrentFloor()));
             elevator.adjustDirection();
 
         }
