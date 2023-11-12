@@ -248,11 +248,11 @@ public class Main {
 
         }
 
-        String structureType = propertyFile.getProperty(structures);
-        int numFloors = Integer.parseInt(propertyFile.getProperty(floors));
-        int passengerProbabilty = Integer.parseInt(propertyFile.getProperty(passengers));
-        int elevatorCap = Integer.parseInt(propertyFile.getProperty(elevatorCapacity));
-        int simDuration = Integer.parseInt(propertyFile.getProperty(duration));
+        String structureType = propertyFile.getProperty("structures");
+        int numFloors = Integer.parseInt(propertyFile.getProperty("floors"));
+        int passengerProbabilty = Integer.parseInt(propertyFile.getProperty("passengers"));
+        int elevatorCap = Integer.parseInt(propertyFile.getProperty("elevatorCapacity"));
+        int simDuration = Integer.parseInt(propertyFile.getProperty("duration"));
 
         Elevator elevator = new Elevator(elevatorCap);
         Floor[] floors = new Floor[numFloors];
