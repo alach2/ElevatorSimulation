@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Deque;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 class Elevator {
     private int currFloor;
@@ -19,11 +20,13 @@ class Elevator {
         elevatorCapacity = capacity;
         goingUp = true;
         goingDown = false;
+        this.goingUpPassenger = new LinkedList<>();
+        this.goingDownPassenger = new LinkedList<>();
         this.passengers = new PriorityQueue<>();
     }   
 
     public void move(){
-        if (goingUp == true) {
+        if (goingUp) {
             currFloor++;
         } else {
             currFloor--;
@@ -76,8 +79,10 @@ class Elevator {
             Passenger topPassenger = passengers.peek();
             if (currFloor < topPassenger.getDestination()){
                 goingUp = true;
+                goingDown = false;
             } else {
                 goingDown = true;
+                goingUp = false;
             }
         }
     }

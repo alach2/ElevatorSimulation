@@ -35,7 +35,7 @@ class Main {
             floors[i] = new Floor(i+1, structureType, passengerProbabilty);
         }
 
-        for (int tick = 0; tick < simDuration; tick++){
+        for (int tick = 0; tick < simDuration && elevator.getCurrentFloor() <= 15; tick++){
             for(Floor floor : floors){
                 floor.tick(elevator);
             }
