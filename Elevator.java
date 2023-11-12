@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.PriorityQueue;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Passenger {
     private String name;
@@ -55,6 +56,7 @@ public class List {
 
 public class Floor {
 
+    private static Random random = new Random();
     public Deque<Passenger> goingUpPassenger;
     public Deque<Passenger> goingDownPassenger;
     private int totalFloors;
@@ -135,6 +137,8 @@ public class Elevator {
     private int currFloor;
     private int elevatorCapacity;
     public PriorityQueue<Passenger> passengers;
+    public Deque<Passenger> goingUpPassenger;
+    public Deque<Passenger> goingDownPassenger;
 
     public boolean goingUp;
     public boolean goingDown;
@@ -163,12 +167,16 @@ public class Elevator {
         }
     }
 
-    public void boardPassenger(Passenger passenger){
-        if (passengers.size() < elevatorCapacity) {
-            passengers.add(passenger);
-            System.out.println("Passenger " + passenger.getName() + " entered the elevator");
-        } else {
-            System.out.println("Sorry, the elevator is full");
+    public void boardReleasePassenger(){
+        releasePassenger();
+        boardCurrFloor();
+    }
+
+    public void boardPassenger(Deque<Passenger> passengerEntering){
+        while(passengers.size() < elevatorCapacity && !(passengerEntering.isEmpty())){
+            Passenger pass = passengerEntering.poll();
+            boardPassenger(pass);
+            System.out.println("Passenger " + pass.getName() + " entered the elevator");
         }
     }
     
@@ -179,6 +187,13 @@ public class Elevator {
         }
     }
 
+    public void boardCurrFloor(){
+        if(goingUp()){
+            boardPassenger(goingUpPassenger);
+        }else{
+            boardPassenger(goingDownPassenger);
+        }
+    }
     public void adjustDirection(){
         if (passengers.isEmpty()) {
             goingUp = true;
@@ -232,6 +247,7 @@ public class Main {
             propertyFile.setProperty("duration", "500");
 
         }
+
         String structureType = propertyFile.getProperty(structures);
         int numFloors = Integer.parseInt(propertyFile.getProperty(floors));
         int passengerProbabilty = Integer.parseInt(propertyFile.getProperty(passengers));
@@ -239,8 +255,22 @@ public class Main {
         int simDuration = Integer.parseInt(propertyFile.getProperty(duration));
 
         Elevator elevator = new Elevator(elevatorCap);
+        Floor[] floors = new Floor[numFloors];
+        for(int i = 0; i < numFloors; i++){
+            floors[i] = new Floor(i+1, structureType, passengerProbabilty);
+        }
 
         for (int tick = 0; tick < simDuration; tick++){
+            for(Floor floor : floors){
+                floor.tick(elevator);
+            }
+            System.out.println("Tick " + tick + " the elevator is on floor " + elevator.getCurrentFloor());
+
+            elevator.move();
+
+            elevator.boardReleasePassenger();
+
+            elevator.adjustDirection();
 
         }
 
