@@ -31,6 +31,7 @@ class Elevator {
         } else {
             currFloor--;
         }
+        System.out.println("The curr floor is now " + currFloor);
     }
 
     public void travelCertainFloors(int floors){
@@ -75,6 +76,7 @@ class Elevator {
         if (passengers.isEmpty()) {
             goingUp = true;
             goingDown = false;
+            System.out.println("oops");
         } else {
             Passenger topPassenger = passengers.peek();
             if (currFloor < topPassenger.getDestination()){
