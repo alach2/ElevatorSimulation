@@ -20,7 +20,6 @@ class Floor {
         goingDownPassenger = PassList.createPassengerQueue(type);
     }
     public void tick(Elevator elevator){
-        System.out.println("yahoo");
         loadingPassengers(elevator);
 
         if (elevator.isGoingUp() && elevator.getCurrentFloor() < totalFloors) {
@@ -30,6 +29,7 @@ class Floor {
             int travelingFloors = Math.min(5, elevator.getCurrentFloor() - 1);
             elevator.travelCertainFloors(travelingFloors);
         }
+        System.out.println("yahoo");
         newPassenger(); 
     }
 

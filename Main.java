@@ -1,10 +1,10 @@
-import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
 class Main {
     public static void main(String[] args) {
+        List<Integer> passengerWait = new ArrayList<>();
         Properties propertyFile = new Properties();
         if (args.length > 0) {
             String file = args[0];
@@ -51,8 +51,20 @@ class Main {
 
         //print every step of the simulation
 
-        //longest time between arrival and destination
-        //shortest time between arrival and destination
-        //average time between trips 
+       
+    }
+    private static void collectWaitTimes(List<Integer> passengerWait, Floor[] floors, Elevator elevator){
+        for(Floor floor : floors){
+            for(Passenger passenger : floor.goingUpPassenger){
+                passengerWait.add(elevator.getCurrentFloor() - passenger.getCurrentFloor());
+            }
+            for(Passenger passenger : floor.goingDownPassenger){
+                passengerWait.add(passenger.getCurrentFloor() - elevator.getCurrentFloor());
+            }
+        }
+    }
+
+    private static void printSimStats(List<Integer> passengerWait){
+        
     }
 }
