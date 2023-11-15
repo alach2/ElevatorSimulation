@@ -47,12 +47,14 @@ class Main {
             
             elevator.adjustDirection();
 
+            collectWaitTimes(passengerWait, floors, elevator);
+
         }
 
         //print every step of the simulation
-
-       
+        printSimStats(passengerWait);
     }
+
     private static void collectWaitTimes(List<Integer> passengerWait, Floor[] floors, Elevator elevator){
         for(Floor floor : floors){
             for(Passenger passenger : floor.goingUpPassenger){
@@ -65,6 +67,24 @@ class Main {
     }
 
     private static void printSimStats(List<Integer> passengerWait){
-        
+        int total = 0;
+        int longest = 0;
+        int shortest = 100000;
+
+        for(int waitTime : passengerWait){
+            total += waitTime;
+            if(waitTime > longest){
+                longest = waitTime;
+            }
+
+            if(waitTime < shortest){
+                shortest = waitTime;
+            }
+        }
+
+        double average = total / (double) passengerWait.size();
+        System.out.println("Average wait time: " + average);
+        System.out.println("Longest wait time: " + longest);
+        System.out.println("Shortest wait time: " + shortest);
     }
 }
