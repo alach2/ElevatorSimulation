@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 class Main {
     public static void main(String[] args) {
@@ -35,7 +36,7 @@ class Main {
             floors[i] = new Floor(i+1, structureType, passengerProbabilty);
         }
 
-        for (int tick = 0; tick < simDuration && elevator.getCurrentFloor() <= 15; tick++){
+        for (int tick = 0; tick < simDuration; tick++){
             for(Floor floor : floors){
                 floor.tick(elevator);
             }

@@ -1,7 +1,8 @@
 import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Deque; 
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,8 +17,8 @@ class Floor {
     public Floor(int total, String type, double passProb){
         totalFloors = total;
         passengerProbability = passProb;
-        goingUpPassenger = PassList.createPassengerQueue(type);
-        goingDownPassenger = PassList.createPassengerQueue(type);
+        goingUpPassenger = new LinkedList<>();
+        goingDownPassenger = new LinkedList<>();
     }
     public void tick(Elevator elevator){
         loadingPassengers(elevator);
@@ -29,7 +30,6 @@ class Floor {
             int travelingFloors = Math.min(5, elevator.getCurrentFloor() - 1);
             elevator.travelCertainFloors(travelingFloors);
         }
-        System.out.println("yahoo");
         newPassenger(); 
     }
 
@@ -67,8 +67,10 @@ class Floor {
     }
 
     private void newPassenger(){
+        System.out.println("Generating new passengers...");
         if(random.nextDouble() < passengerProbability){
             Passenger lastPass = goingUpPassenger.peekLast();
+            System.out.println("Passenger created");
             if(lastPass != null){
                 int dest = lastPass.getDestination();
                 int newDestination = random.nextInt(totalFloors) + 1;   
