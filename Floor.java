@@ -5,91 +5,30 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Queue;
 
 class Floor {
+    private int floorNum;
+    private Queue<Passenger> waitingPassengers;
 
-    private static Random random = new Random();
-    public Deque<Passenger> goingUpPassenger;
-    public Deque<Passenger> goingDownPassenger;
-    private int totalFloors;
-    public double passengerProbability;
-    
-    public Floor(int total, String type, double passProb){
-        totalFloors = total;
-        passengerProbability = passProb;
-        goingUpPassenger = new LinkedList<>();
-        goingDownPassenger = new LinkedList<>();
+    public Floor(int floorNum){
+        this.floorNum = floorNum;
+        this.waitingPassengers = new LinkedList<>();
     }
-    public void tick(Elevator elevator){
-        loadingPassengers(elevator);
-
-        if (elevator.isGoingUp() && elevator.getCurrentFloor() < totalFloors) {
-            int travelingFloors = Math.min(5, totalFloors - elevator.getCurrentFloor());
-            elevator.travelCertainFloors(travelingFloors);
-        } else if (elevator.isGoingDown() && elevator.getCurrentFloor() > 1){
-            int travelingFloors = Math.min(5, elevator.getCurrentFloor() - 1);
-            elevator.travelCertainFloors(travelingFloors);
-        }
-        newPassenger(); 
+    public int getFloorNum(){
+        return floorNum;
+    }
+    public Queue<Passenger> getWaitingPassengers(){
+        return waitingPassengers;
     }
 
-    // method to unload and load passengers   
-    private void loadingPassengers(Elevator elevator){
-        if(elevator.isGoingUp() && elevator.getCurrentFloor() <= totalFloors){
-            List<Passenger> passengerBoarding = new ArrayList<>();
-            for(Passenger passenger : goingUpPassenger){
-                if(passenger.getDestination() == elevator.getCurrentFloor()){
-                    passengerBoarding.add(passenger);
-                }
-            }
-
-            for(Passenger passenger : passengerBoarding){
-                goingUpPassenger.remove(passenger);
-                elevator.board(passenger);
-                System.out.println(passenger.getName() + " just boarded the elevator on floor " + elevator.getCurrentFloor());
-            }
-
-        } else if (elevator.isGoingDown() && elevator.getCurrentFloor() >= 1){
-            List<Passenger> passengerBoarding = new ArrayList<>();
-            for(Passenger passenger : goingDownPassenger){
-                if(passenger.getDestination() == elevator.getCurrentFloor()){
-                    passengerBoarding.add(passenger);
-                }
-            }
-
-            for(Passenger passenger : passengerBoarding){
-                goingDownPassenger.remove(passenger);
-                elevator.board(passenger);
-                System.out.println(passenger.getName() + " just boarded the elevator on floor " + elevator.getCurrentFloor());
-            }
-
-        }
+    public void addPassenger(Passenger passenger){
+        waitingPassengers.offer(passenger);
+        System.out.println("New passenger on floor " + floorNum + " going to floor " + passenger.getDestination());
     }
 
-    private void newPassenger(){
-        System.out.println("Generating new passengers...");
-        if(random.nextDouble() < passengerProbability){
-            Passenger lastPass = goingUpPassenger.peekLast();
-            System.out.println("Passenger created");
-            if(lastPass != null){
-                int dest = lastPass.getDestination();
-                int newDestination = random.nextInt(totalFloors) + 1;   
-                int passengerNumber = random.nextInt(100);
-                String passengerName = "Passenger" + passengerNumber;
-                Passenger newPassenger = new Passenger(passengerName, newDestination, 0);
-            
-            if (newDestination > dest){
-                goingUpPassenger.add(newPassenger);
-                System.out.println(newPassenger.getName() + " is waiting to go to " + newDestination);
-            } else {
-                goingDownPassenger.add(newPassenger);
-                System.out.println(newPassenger.getName() + " is waiting to go down to " + newDestination);
-            }
-            System.out.println("This passenger is going to " + newPassenger.getDestination());
-            }
-
-        }
-        
+    public void removePassenger(Passenger passenger){
+        waitingPassengers.remove(passenger);
     }
 
 }

@@ -1,11 +1,9 @@
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 class Main {
     public static void main(String[] args) {
-        List<Integer> passengerWait = new ArrayList<>();
         Properties propertyFile = new Properties();
         if (args.length > 0) {
             String file = args[0];
@@ -26,66 +24,121 @@ class Main {
 
         String structureType = propertyFile.getProperty("structures");
         int numFloors = Integer.parseInt(propertyFile.getProperty("floors"));
-        double passengerProbabilty = Double.parseDouble(propertyFile.getProperty("passengers"));
+        double passengerProbability = Double.parseDouble(propertyFile.getProperty("passengers"));
         int elevatorCap = Integer.parseInt(propertyFile.getProperty("elevatorCapacity"));
         int simDuration = Integer.parseInt(propertyFile.getProperty("duration"));
-
+        
         Elevator elevator = new Elevator(elevatorCap);
-        Floor[] floors = new Floor[numFloors];
-        for(int i = 0; i < numFloors; i++){
-            floors[i] = new Floor(i+1, structureType, passengerProbabilty);
+        List<Floor> floors = new ArrayList<>();
+        List<Passenger> allPassengers = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 1; i <= numFloors; i++) {
+            floors.add(new Floor(i));
         }
+        
+        for(int tick = 0; tick < simDuration; tick++){
+            elevator.releasingPassengers();
 
-        for (int tick = 0; tick < simDuration; tick++){
-            for(Floor floor : floors){
-                floor.tick(elevator);
-            }
-            System.out.println("Tick " + tick + " the elevator is on floor " + elevator.getCurrentFloor());
+            int closestFloor = findClosestFloorWithPassengers(elevator, floors);
+            System.out.println("Closest floor with passengers: " + closestFloor);
+            if(elevator.getCurrentFloor() != closestFloor){
+            moveElevator(elevator, closestFloor);
 
-            elevator.move();
-
-            elevator.boardReleasePassenger();
+            boardingPassengers(elevator, floors.get(elevator.getCurrentFloor() - 1));
             
-            elevator.adjustDirection();
+            moveElevator(elevator, elevator.getPassengers().get(0).getDestination());
+            elevator.releasingPassengers();
+         
+            }else{
+                System.out.println("Elevator is already on closest floor with passengers");
+                Floor currentSimulationFloor = floors.get(closestFloor-1);
+                Queue<Passenger> waitingPassenger = currentSimulationFloor.getWaitingPassengers();
 
-            collectWaitTimes(passengerWait, floors, elevator);
+                if(!waitingPassenger.isEmpty()){
+                    for(Passenger passenger : waitingPassenger){
+                        System.out.println("Passenger boarded at floor " + closestFloor);
+                        elevator.boardPassengers(passenger);
+                        currentSimulationFloor.removePassenger(passenger);
+                    }
+                }
+            }
 
+         for (Floor floor : floors) {
+            if (random.nextDouble() < passengerProbability) {
+                int newDestination = random.nextInt(numFloors) + 1;
+                Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
+                floor.addPassenger(newPassenger);
+                allPassengers.add(newPassenger);
+                System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
+            }
         }
-
-        //print every step of the simulation
-        printSimStats(passengerWait);
+    }
+    simulationStatistic(allPassengers);
     }
 
-    private static void collectWaitTimes(List<Integer> passengerWait, Floor[] floors, Elevator elevator){
+    private static int findClosestFloorWithPassengers(Elevator elevator, List<Floor> floors){
+        int closestFloor = -1;
+        int minDistance = Integer.MAX_VALUE;
         for(Floor floor : floors){
-            for(Passenger passenger : floor.goingUpPassenger){
-                passengerWait.add(elevator.getCurrentFloor() - passenger.getCurrentFloor());
+            if(!floor.getWaitingPassengers().isEmpty()){
+                int distance = Math.abs(floor.getFloorNum() - elevator.getCurrentFloor());
+                if(distance < minDistance){
+                    minDistance = distance;
+                    closestFloor = floor.getFloorNum();
+                }
             }
-            for(Passenger passenger : floor.goingDownPassenger){
-                passengerWait.add(passenger.getCurrentFloor() - elevator.getCurrentFloor());
+        }
+        if (closestFloor == -1) {
+        closestFloor = elevator.getCurrentFloor();
+        }
+
+        return closestFloor;
+    }
+
+    private static void moveElevator(Elevator elevator, int destinationFloor){
+        if(elevator.getCurrentFloor() < destinationFloor){
+            while(elevator.getCurrentFloor() < destinationFloor){
+            elevator.moveUp();
             }
+        } else if(elevator.getCurrentFloor() > destinationFloor){
+            while(elevator.getCurrentFloor() > destinationFloor){
+            elevator.moveDown();
+            }
+        }
+    }   
+
+    private static void boardingPassengers(Elevator elevator, Floor floor){
+        while(!floor.getWaitingPassengers().isEmpty()){
+            Passenger passenger = floor.getWaitingPassengers().poll();
+            elevator.boardPassengers(passenger);
         }
     }
 
-    private static void printSimStats(List<Integer> passengerWait){
-        int total = 0;
-        int longest = 0;
-        int shortest = 100000;
+    public static void simulationStatistic(List<Passenger> passengers){
+        long totalConveyanceTime = 0;
+        long longestTime = Long.MIN_VALUE;
+        long shortestTime = Long.MAX_VALUE;
 
-        for(int waitTime : passengerWait){
-            total += waitTime;
-            if(waitTime > longest){
-                longest = waitTime;
+        for(Passenger passenger : passengers){
+            long conveyanceTime = passenger.getConveyanceTime() - passenger.getArrivalTime();
+            totalConveyanceTime += conveyanceTime;
+
+            if(conveyanceTime > longestTime){
+                longestTime = conveyanceTime;
             }
 
-            if(waitTime < shortest){
-                shortest = waitTime;
+            if(conveyanceTime < shortestTime){
+                shortestTime = conveyanceTime;
             }
         }
 
-        double average = total / (double) passengerWait.size();
-        System.out.println("Average wait time: " + average);
-        System.out.println("Longest wait time: " + longest);
-        System.out.println("Shortest wait time: " + shortest);
-    }
+        int totalPassengers = passengers.size();
+        long averageTime = totalConveyanceTime / totalPassengers;
+
+        System.out.println("Average Time: " + averageTime + " milliseconds");
+        System.out.println("Longest Time: " + longestTime + " milliseconds");
+        System.out.println("Shortest Time: " + shortestTime + " milliseconds");
+    }    
 }
+

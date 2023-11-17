@@ -2,110 +2,81 @@ import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Deque;
-import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.List;
 
 class Elevator {
-    private int currFloor;
-    private int elevatorCapacity;
-    public PriorityQueue<Passenger> passengers;
-    public Deque<Passenger> goingUpPassenger;
-    public Deque<Passenger> goingDownPassenger;
+    private int currentFloor;
+    public int elevatorCapacity;
+    private String direction;
+    List<Passenger> passengers;
 
-    public boolean goingUp;
-    public boolean goingDown;
-
-    public Elevator(int capacity){
-        currFloor = 1;
-        elevatorCapacity = capacity;
-        goingUp = true;
-        goingDown = false;
-        this.goingUpPassenger = new LinkedList<>();
-        this.goingDownPassenger = new LinkedList<>();
-        this.passengers = new PriorityQueue<>();
-    }   
-
-    public void move(){
-        if (goingUp) {
-            currFloor++;
-        } else {
-            currFloor--;
-        }
-        System.out.println("The curr floor is now " + currFloor);
-    }
-
-    public void travelCertainFloors(int floors){
-        if (isGoingUp() == true ) {
-            currFloor += floors;
-        } else if (isGoingDown()) {
-            currFloor -= floors;
-        }
-    }
-
-    public void boardReleasePassenger(){
-        releasePassenger();
-        boardCurrFloor();
-    }
-
-    public void boardPassenger(Deque<Passenger> passengerEntering){
-        while(passengers.size() < elevatorCapacity && !(passengerEntering.isEmpty())){
-            Passenger pass = passengerEntering.poll();
-            board(pass);
-            System.out.println("Passenger " + pass.getName() + " entered the elevator");
-        }
-    }
-    public void board(Passenger passenger){
-        passengers.add(passenger);
-    }
-
-    public void releasePassenger(){
-        Passenger passenger = passengers.poll();
-        if (passenger != null) {
-            System.out.println("Passenger " + passenger.getName() + " left the elevator on floor " + currFloor);
-        }
-    }
-
-    public void boardCurrFloor(){
-        if(goingUp){
-            boardPassenger(goingUpPassenger);
-        }else{
-            boardPassenger(goingDownPassenger);
-        }
-    }
-    public void adjustDirection(){
-        if (passengers.isEmpty()) {
-            goingUp = true;
-            goingDown = false;
-            System.out.println("oops");
-        } else {
-            Passenger topPassenger = passengers.peek();
-            if (currFloor < topPassenger.getDestination()){
-                goingUp = true;
-                goingDown = false;
-            } else {
-                goingDown = true;
-                goingUp = false;
-            }
-        }
-    }
-
-    public boolean isGoingUp(){
-        if (!(passengers.isEmpty()) && currFloor < passengers.peek().getDestination()){
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isGoingDown(){
-        if (!(passengers.isEmpty()) && currFloor > passengers.peek().getDestination()){
-            return true;
-        }
-        return false;
+    public Elevator(int elevatorCap){
+        elevatorCapacity = elevatorCap;
+        currentFloor = 1;
+        direction = "NONE";
+        this.passengers = new ArrayList<>();
     }
 
     public int getCurrentFloor(){
-        return currFloor;
+        return currentFloor;
     }
-    
-}
 
+    public String getDirection(){
+        return direction;
+    }
+
+    public List<Passenger> getPassengers(){
+        return passengers;
+    }
+
+    public void setDirection(String type){
+        if(type.equals("UP")){
+            direction = "UP";
+        } else if(type.equals("DOWN")){
+            direction = "DOWN";
+        }
+    }
+    public void boardPassengers(Passenger passenger){
+        System.out.println("Passenger boarded at floor " + currentFloor);
+        passengers.add(passenger);
+    }
+
+    public void releasingPassengers(){
+        List<Passenger> released = new ArrayList<>();
+        for(Passenger passenger : passengers){
+            if(passenger.getDestination() == currentFloor){
+                released.add(passenger);
+            }
+        }
+        for(Passenger passenger : released){
+            passengers.remove(passenger);
+            System.out.println("Passenger released at floor " + currentFloor);
+        }
+    }
+
+    public void moveToFloor(int destination){
+        if(destination > currentFloor){
+            System.out.println("Moving up to floor " + destination);
+        } else if(destination < currentFloor){
+            System.out.println("Moving down to floor " + destination);
+        }else{
+            System.out.println("Elevator is already on floor " + currentFloor);
+        }
+        currentFloor = destination;
+        System.out.println("Elevator is now on floor " + currentFloor);
+    }
+
+    public void moveUp(){
+        System.out.println("Elevator is going up. It is currently on floor " + currentFloor);
+        currentFloor++;
+    }
+    public void moveDown(){
+        if(currentFloor > 1){
+        System.out.println("Elevator is going down. It is currently on floor " + currentFloor);
+        currentFloor--;
+        } else{
+            System.out.println("Elevator is already on first floor");
+        }
+    }
+}

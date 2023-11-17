@@ -1,37 +1,29 @@
 class Passenger {
-    private String name;
+    
+    private int currentFloor;
     private int destination;
-    private int currFloor;
+    private long arrivalTime;
+    private long conveyanceTime;
 
-    public Passenger(String name, int destination, int currFloor){
-        name = this.name;
-        destination = this.destination;
-        currFloor = this.currFloor;
-    }   
-    public void waiting(int newDestination){
-        destination = newDestination;
-    }
+     public Passenger(int currentFloor, int destination){
+        this.currentFloor = currentFloor;
+        this.destination = destination;
+        this.arrivalTime = System.currentTimeMillis();
+     }
 
-    public void boarding(){
-        currFloor = 0;
-    }
-
-    public void arriving(){
-        currFloor = destination;
-        destination = 0;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public int getDestination(){
+     public int getDestination(){
         return destination;
-    }
-
-    public int getCurrentFloor(){
-        return currFloor;
-    }
-
-
+     }
+     public int getCurrentFloor(){
+        return currentFloor;
+     }
+     public long getArrivalTime(){
+        return arrivalTime;
+     }
+     public long getConveyanceTime(){
+        return conveyanceTime;
+     }
+     public void setConveyanceTime(){
+        this.conveyanceTime = System.currentTimeMillis();
+     }
 }
