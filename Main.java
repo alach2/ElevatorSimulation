@@ -1,5 +1,6 @@
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Random;
 import java.util.*;
 
 class Main {
@@ -43,11 +44,12 @@ class Main {
             int closestFloor = findClosestFloorWithPassengers(elevator, floors);
             System.out.println("Closest floor with passengers: " + closestFloor);
             if(elevator.getCurrentFloor() != closestFloor){
-            moveElevator(elevator, closestFloor);
-
-            boardingPassengers(elevator, floors.get(elevator.getCurrentFloor() - 1));
+            moveElevator(elevator, closestFloor, floors);
             
-            moveElevator(elevator, elevator.getPassengers().get(0).getDestination());
+            boardingPassengers(elevator, floors.get(elevator.getCurrentFloor() - 1));
+            elevator.releasingPassengers();
+
+            moveElevator(elevator, elevator.getPassengers().get(0).getDestination(), floors);
             elevator.releasingPassengers();
          
             }else{
@@ -96,14 +98,29 @@ class Main {
         return closestFloor;
     }
 
-    private static void moveElevator(Elevator elevator, int destinationFloor){
+    private static void moveElevator(Elevator elevator, int destinationFloor, List<Floor> floors){
         if(elevator.getCurrentFloor() < destinationFloor){
             while(elevator.getCurrentFloor() < destinationFloor){
+            int currentFloor = elevator.getCurrentFloor();
             elevator.moveUp();
+
+            Floor floorObj = floors.get(currentFloor-1);
+            if(!floorObj.getWaitingPassengers().isEmpty()){
+            boardingPassengers(elevator, floorObj);
+            System.out.println("Passenger was picked up on floor " + currentFloor);
             }
+            }
+            
         } else if(elevator.getCurrentFloor() > destinationFloor){
             while(elevator.getCurrentFloor() > destinationFloor){
+            int currentFloor = elevator.getCurrentFloor();
             elevator.moveDown();
+            
+            Floor floorObj = floors.get(currentFloor-1);
+            if(!floorObj.getWaitingPassengers().isEmpty()){
+            boardingPassengers(elevator, floorObj);
+            System.out.println("Passenger was picked up on floor " + currentFloor);
+            }
             }
         }
     }   

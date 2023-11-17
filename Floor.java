@@ -24,7 +24,6 @@ class Floor {
 
     public void addPassenger(Passenger passenger){
         waitingPassengers.offer(passenger);
-        System.out.println("New passenger on floor " + floorNum + " going to floor " + passenger.getDestination());
     }
 
     public void removePassenger(Passenger passenger){

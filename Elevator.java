@@ -38,8 +38,8 @@ class Elevator {
         }
     }
     public void boardPassengers(Passenger passenger){
-        System.out.println("Passenger boarded at floor " + currentFloor);
         passengers.add(passenger);
+        System.out.println("Passenger boarded at " + currentFloor);
     }
 
     public void releasingPassengers(){

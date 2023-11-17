@@ -88,45 +88,6 @@ class PassList {
             System.out.println("---------- Tick " + (tick + 1) + " ----------");
         }
     }
-
-
-
-/* 
-
-             Floor currentFloor = floors.get(elevator.getCurrentFloor() - 1);
-             if(!currentFloor.getWaitingPassengers().isEmpty()){
-                Passenger newPassenger = currentFloor.getWaitingPassengers().poll();
-                elevator.loadingPassengers(newPassenger);
-                System.out.println("Passenger on floor " + currentFloor.getFloorNum() + " boards elevator, Elevator goes " + elevator.getDirection() + " to floor " + newPassenger.getDestination());
-             } 
-                if(elevator.hasRequests()){
-                    int nextFloor = elevator.getNextRequestFloor();
-                    System.out.println("Elevator is going " + elevator.getDirection() + ". Passenger is waiting on floor " + elevator.getCurrentFloor() + " going " + elevator.getDirection() + " to floor " + nextFloor);
-                    elevator.moveToFloor(nextFloor);
-                }else{
-                    if (elevator.getDirection().equals("UP")) {
-                        elevator.moveUp();
-                    } else if (elevator.getDirection().equals("DOWN")) {
-                        elevator.moveDown();
-                    }
-                }
-             
-             for(Floor floor : floors){
-                if(random.nextDouble() < passengerProbability){
-                    int newDestination = random.nextInt(numFloors) + 1;
-                    Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
-                    floor.addPassenger(newPassenger);
-                    System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
-                }
-
-        }
-        for(Floor floor : floors){
-            List<Passenger> arrivedPassengers = floor.getarrivedPassengers();
-            for(Passenger passenger : arrivedPassengers){
-                System.out.println("Passenger arrived at     " + floor.getFloorNum());
-            }
-            arrivedPassengers.clear();
-            */
         }
     
 
