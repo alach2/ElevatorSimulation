@@ -46,13 +46,13 @@ class Main {
             for (Floor floor : floors) {
                 if (random.nextDouble() < passengerProbability) {
                     if (elevator.getCurrentFloor() < numFloors) {
-                        int newDestination = Math.min(5, numFloors - elevator.getCurrentFloor());
+                        int newDestination = Math.min(5, numFloors - floor.getFloorNum());
                         Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
                         floor.addPassenger(newPassenger);
                         allPassengers.add(newPassenger);
                         System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
-                    } else if ( elevator.getCurrentFloor() > 1) {
-                        int newDestination = Math.min(5, elevator.getCurrentFloor() - 1);
+                    } else if (elevator.getCurrentFloor() >= 1) {
+                        int newDestination = Math.min(5, floor.getFloorNum() - 1);
                         Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
                         floor.addPassenger(newPassenger);
                         allPassengers.add(newPassenger);
