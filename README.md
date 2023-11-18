@@ -5,3 +5,4 @@ Next, my simulation calculates which floor is the closest with passengers waitin
 Then, while it is moving up or down one floor at a time, it picks up any extra passengers and adds them to the queue. It finally reaches the destination of the first passenger and reales them.
 At this point, the elevator might have some extra passengers on the queue to release, but it finds the next closest floor and travels there while dropping off passengers along the way. 
 At the end, it prints the longest and shortest time spent traveling for complete passengers. This simulation goes on until the duration is done.
+I print every single step of the tick, so every floor traveled and when new passengers are picked up, when released/boarded, etc. I will note it does get a little hard to follow, but if you remeber each destination and source floor, then the queue pattern will show up. 
