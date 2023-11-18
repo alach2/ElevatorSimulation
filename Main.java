@@ -45,19 +45,11 @@ class Main {
             //For some floors, I create new passengers that are waiting
             for (Floor floor : floors) {
                 if (random.nextDouble() < passengerProbability) {
-                    if (elevator.getCurrentFloor() < numFloors) {
-                        int newDestination = Math.min(5, numFloors - floor.getFloorNum());
-                        Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
-                        floor.addPassenger(newPassenger);
-                        allPassengers.add(newPassenger);
-                        System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
-                    } else if (elevator.getCurrentFloor() >= 1) {
-                        int newDestination = Math.min(5, floor.getFloorNum() - 1);
-                        Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
-                        floor.addPassenger(newPassenger);
-                        allPassengers.add(newPassenger);
-                        System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
-                    }
+                    int newDestination = random.nextInt(numFloors) + 1;
+                    Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
+                    floor.addPassenger(newPassenger);
+                    allPassengers.add(newPassenger);
+                    System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
                 }
             }
             elevator.releasingPassengers(); //if there are passengers to be released on the current floor
@@ -119,7 +111,7 @@ class Main {
                 int currentFloor = elevator.getCurrentFloor();
                 elevator.moveUp();
 
-                if(currentFloor >= 1 && currentFloor <= floors.size()){
+                if(currentFloor < floors.size()){
                     Floor floorObj = floors.get(currentFloor-1);
                     if (!floorObj.getWaitingPassengers().isEmpty()) {
                         boardingPassengers(elevator, floorObj);
@@ -160,7 +152,7 @@ class Main {
 
         //For every passenger, the total time traveled until destination is calculated and stored as either longest or shortest
         for (Passenger passenger : passengers) {
-            long destinationTime = passenger.getDestinationTime() - passenger.getArrivalTime();
+            long destinationTime = Math.abs(passenger.getDestinationTime() - passenger.getArrivalTime());
             totalDestinationTime += destinationTime;
 
             if (destinationTime > longestTime) {
