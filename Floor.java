@@ -1,9 +1,6 @@
 import java.util.PriorityQueue;
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Queue;
 
@@ -22,6 +19,7 @@ class Floor {
         return waitingPassengers;
     }
 
+    //Methods to remove and add passengers to the waitingPassenger queue
     public void addPassenger(Passenger passenger){
         waitingPassengers.offer(passenger);
     }

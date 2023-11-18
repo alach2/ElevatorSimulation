@@ -3,12 +3,12 @@ class Passenger {
     private int currentFloor;
     private int destination;
     private long arrivalTime;
-    private long conveyanceTime;
+    private long destinationTime;
 
      public Passenger(int currentFloor, int destination){
         this.currentFloor = currentFloor;
         this.destination = destination;
-        this.arrivalTime = System.currentTimeMillis();
+        this.arrivalTime = System.currentTimeMillis(); //tracks the arrival time of every passenger
      }
 
      public int getDestination(){
@@ -20,10 +20,10 @@ class Passenger {
      public long getArrivalTime(){
         return arrivalTime;
      }
-     public long getConveyanceTime(){
-        return conveyanceTime;
+     public long getDestinationTime(){
+        return destinationTime;
      }
-     public void setConveyanceTime(){
-        this.conveyanceTime = System.currentTimeMillis();
+     public void setDestinationTime(){
+        this.destinationTime = System.currentTimeMillis(); //tracks the total time till pass arrives on destination
      }
 }
