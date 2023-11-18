@@ -1,6 +1,5 @@
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Random;
 import java.util.*;
 
 class Main {
@@ -46,11 +45,19 @@ class Main {
             //For some floors, I create new passengers that are waiting
             for (Floor floor : floors) {
                 if (random.nextDouble() < passengerProbability) {
-                    int newDestination = random.nextInt(numFloors) + 1;
-                    Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
-                    floor.addPassenger(newPassenger);
-                    allPassengers.add(newPassenger);
-                    System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
+                    if (elevator.getCurrentFloor() < numFloors) {
+                        int newDestination = Math.min(5, numFloors - elevator.getCurrentFloor());
+                        Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
+                        floor.addPassenger(newPassenger);
+                        allPassengers.add(newPassenger);
+                        System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
+                    } else if ( elevator.getCurrentFloor() > 1) {
+                        int newDestination = Math.min(5, elevator.getCurrentFloor() - 1);
+                        Passenger newPassenger = new Passenger(floor.getFloorNum(), newDestination);
+                        floor.addPassenger(newPassenger);
+                        allPassengers.add(newPassenger);
+                        System.out.println("New passenger on floor " + floor.getFloorNum() + " going to floor " + newDestination);
+                    }
                 }
             }
             elevator.releasingPassengers(); //if there are passengers to be released on the current floor
@@ -112,7 +119,7 @@ class Main {
                 int currentFloor = elevator.getCurrentFloor();
                 elevator.moveUp();
 
-                if(currentFloor < floors.size()){
+                if(currentFloor >= 1 && currentFloor <= floors.size()){
                     Floor floorObj = floors.get(currentFloor-1);
                     if (!floorObj.getWaitingPassengers().isEmpty()) {
                         boardingPassengers(elevator, floorObj);
@@ -135,7 +142,7 @@ class Main {
                 }
             }
         }
-    }   
+    }      
 
     //Passengers are boarded if the waitingPassengers queue is not empty on a floor
     private static void boardingPassengers(Elevator elevator, Floor floor){
